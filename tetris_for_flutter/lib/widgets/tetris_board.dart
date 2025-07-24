@@ -1,9 +1,8 @@
-// lib/widgets/tetris_board.dart
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:tetris_for_flutter/widgets/game_over_dialog.dart';
 
 import '../models/block.dart';
 import '../utils/block_factory.dart';
@@ -70,29 +69,27 @@ class _TetrisBoardState extends State<TetrisBoard> {
           if (isGameOver(currentBlock)) {
             _scoreHistory.add(_score);
             _timer?.cancel();
+
             showDialog(
               context: context,
               barrierDismissible: false,
-              builder: (_) => AlertDialog(
-                title: const Text("Game Over"),
-                content: Text(
-                  "スコア: $_score\nレベル: $_level\n時間: ${_elapsed.inMinutes}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}\n\nスコア履歴: ${_scoreHistory.join(", ")}",
-                ),
-                actions: [
-                  TextButton(
-                    child: const Text("Retry"),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        fixedBlocks = List.generate(
-                          rowCount,
-                          (_) => List.filled(colCount, false),
-                        );
-                        _startGame();
-                      });
-                    },
-                  ),
-                ],
+              builder: (_) => GameOverDialog(
+                score: _score,
+                level: _level,
+                elapsed: _elapsed,
+                scoreHistory: _scoreHistory,
+                onRetry: () {
+                  setState(() {
+                    fixedBlocks = List.generate(
+                      rowCount,
+                      (_) => List.filled(colCount, false),
+                    );
+                    _startGame();
+                  });
+                },
+                onReturnToTitle: () {
+                  Navigator.of(context).pushReplacementNamed('/');
+                },
               ),
             );
           }

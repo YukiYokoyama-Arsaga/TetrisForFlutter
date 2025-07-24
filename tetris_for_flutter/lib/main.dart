@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'screens/game_screen.dart';
+import 'screens/title_screen.dart';
 
 void main() {
   runApp(const TetrisApp());
@@ -11,6 +11,9 @@ class TetrisApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: GameScreen());
+    return const MaterialApp(
+      home: TitleScreen(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }

@@ -1,41 +1,77 @@
 import 'package:flutter/material.dart';
-
-import 'score_table.dart';
+import 'package:tetris_for_flutter/screens/title_screen.dart';
 
 class GameOverDialog extends StatelessWidget {
-  final VoidCallback onRestart;
-  final List<Map<String, dynamic>> scoreHistory;
+  final int score;
+  final int level;
+  final Duration elapsed;
+  final List<int> scoreHistory;
+  final VoidCallback onRetry;
+  final VoidCallback onReturnToTitle;
 
   const GameOverDialog({
     super.key,
-    required this.onRestart,
+    required this.score,
+    required this.level,
+    required this.elapsed,
     required this.scoreHistory,
+    required this.onRetry,
+    required this.onReturnToTitle,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text("Game Over"),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text("ブロックが積み上がりました"),
-            const SizedBox(height: 16),
-            Expanded(child: ScoreTable(scoreHistory: scoreHistory)),
-          ],
-        ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "スコア: $score\n"
+            "レベル: $level\n"
+            "時間: ${elapsed.inMinutes}:${(elapsed.inSeconds % 60).toString().padLeft(2, '0')}\n\n"
+            "スコア履歴: ${scoreHistory.join(", ")}",
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                // onPressed: () {
+                //   Navigator.pop(context);
+                //   onReturnToTitle();
+                // },
+                onPressed: () {
+                  Navigator.pop(context); // ダイアログを閉じてから
+                  Future.microtask(() {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => const TitleScreen(),
+                        transitionsBuilder: (_, animation, __, child) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        transitionDuration: const Duration(milliseconds: 400),
+                      ),
+                    );
+                  });
+                },
+                child: const Text("タイトルに戻る"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  onRetry();
+                },
+                child: const Text("リトライ"),
+              ),
+            ],
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          child: const Text("OK"),
-          onPressed: () {
-            Navigator.pop(context);
-            onRestart();
-          },
-        ),
-      ],
     );
   }
 }
