@@ -10,7 +10,7 @@ class TitleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // 黒背景（レトロゲーム風）
+      backgroundColor: Colors.black, // 黒背景
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, // 縦中央揃え
